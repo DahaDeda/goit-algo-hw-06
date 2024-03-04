@@ -1,4 +1,5 @@
 import re
+from collections import UserDict
 
 class Field:
     pass
@@ -13,38 +14,24 @@ class Phone(Field):
             raise ValueError("Invalid phone number format. Must be 10 digits.")
         self.number = number
 
-class AddressBook:
-    def __init__(self):
-        self.data = []
-
+class AddressBook(UserDict):
     def add_record(self, record):
-        self.data.append(record)
+        self.data[record.name.name] = record
         return "Record added successfully."
 
     def find(self, name):
-        for record in self.data:
-            if record.name.name == name:
-                return record
-        return None
-
-    def find_phone(self, phone_number):
-        for record in self.data:
-            phone = record.find_phone(phone_number)
-            if phone:
-                return phone
-        return None
+        return self.data.get(name)
 
     def delete(self, name):
-        record = self.find(name)
-        if record:
-            self.data.remove(record)
+        if name in self.data:
+            del self.data[name]
             return "Record deleted successfully."
         else:
             return "Record not found."
 
     def show_all_records(self):
-        for record in self.data:
-            print(f"Name: {record.name.name}")
+        for name, record in self.data.items():
+            print(f"Name: {name}")
             for phone in record.phones:
                 print(f"Phone: {phone.number}")
             print("------")
@@ -136,11 +123,7 @@ def edit_phone_number(args, address_book):
 
 @input_error
 def show_all_records(address_book):
-    for record in address_book.data:
-        print(f"Name: {record.name.name}")
-        for phone in record.phones:
-            print(f"Phone: {phone.number}")
-        print("------")
+    address_book.show_all_records()
 
 
     
